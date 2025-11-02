@@ -44,10 +44,10 @@ logic [`MUX_OUT_LENGTH-1:0] mux_out;
 
 // CONTROLLER
 m_controller controller (
-    .clk(clk), .resetn(resetn), .pcpi_valid(pcpi.valid), // control input
-    .instruction(pcpi.instruction), .rs1(pcpi.rs1), .rs2(pcpi.rs2), // data inputs
+    .clk(clk), .resetn(resetn), .pcpi_valid(valid), // control input
+    .instruction(instruction), .rs1(rs1), .rs2(rs2), // data inputs
     .mux_R(mux_R), .mux_D(mux_D), .mux_Z(mux_Z), .mux_multA(mux_multA), .mux_multB(mux_multB), // control inputs
-    .mux_div_rem(mux_div_rem), .mux_out(mux_out), .pcpi_ready(pcpi.ready), .pcpi_wr(pcpi.wr), .pcpi_busy(pcpi.busy), // control inputs
+    .mux_div_rem(mux_div_rem), .mux_out(mux_out), .pcpi_ready(ready), .pcpi_wr(wr), .pcpi_busy(busy), // control inputs
     .rs1_neg(rs1_neg), .rs2_neg(rs2_neg) // data outputs
 );
 
@@ -55,7 +55,7 @@ m_controller controller (
 // REGISTER FILE
 m_registers registers(
     .clk(clk), .resetn(resetn), .mux_multA(mux_multA), .mux_multB(mux_multB), .sub_neg(sub_neg), .mux_R(mux_R), .mux_D(mux_D), .mux_Z(mux_Z), // control inputs
-    .rs1(pcpi.rs1), .rs2(pcpi.rs2), .rs1_neg(rs1_neg), .rs2_neg(rs2_neg), .sub_result(sub_result), .product(product), // data inputs
+    .rs1(rs1), .rs2(rs2), .rs1_neg(rs1_neg), .rs2_neg(rs2_neg), .sub_result(sub_result), .product(product), // data inputs
     .mult_a(mult_a), .mult_b(mult_b), .R(R), .D(D), .Z(Z) // data outputs
 );
 
@@ -73,13 +73,13 @@ m_alu alu(
 always_comb begin
     // MUX output selection
     unique case (mux_out)
-        `MUX_OUT_ZERO:        pcpi.rd = '0;
-        `MUX_OUT_DIV_REM:     pcpi.rd = div_rem;
-        `MUX_OUT_DIV_REM_NEG: pcpi.rd = div_rem_neg;
-        `MUX_OUT_MULT_LOWER:  pcpi.rd = R;
-        `MUX_OUT_MULT_UPPER:  pcpi.rd = Z;
-        `MUX_OUT_ALL1:        pcpi.rd = {32{1'b1}};
-        `MUX_OUT_MINUS_1:     pcpi.rd = -32'd1;
+        `MUX_OUT_ZERO:        rd = '0;
+        `MUX_OUT_DIV_REM:     rd = div_rem;
+        `MUX_OUT_DIV_REM_NEG: rd = div_rem_neg;
+        `MUX_OUT_MULT_LOWER:  rd = product[31:0];
+        `MUX_OUT_MULT_UPPER:  rd = product[63:32];
+        `MUX_OUT_ALL1:        rd = {32{1'b1}};
+        `MUX_OUT_MINUS_1:     rd = -32'd1;
     endcase
 end
 
