@@ -16,7 +16,7 @@ The design replaces software emulation routines with dedicated hardware datapath
 │
 ├── tb/
 │ ├── m_unit_tb.sv 
-│ ├── m_registers_tb.sv 
+│ ├── test_m_registers.sv 
 │
 ├── imgs/ # Architecture diagrams and simulation/synthesis results
 │
@@ -34,23 +34,10 @@ The M-Extension module is composed of two main subsystems:
 
 | Component       | Description |
 |-----------------|------------|
-| FSM Controller (`m_controller`) | Controls sequencing for multiply/divide operations, synchronizing data movement between registers and arithmetic units. |
-| Datapath (`m_registers` & `m_alu`)| Implements arithmetic operations using 32-bit signed/unsigned multipliers and dividers, plus remainder handling logic. |
+| FSM Controller | Controls sequencing for multiply/divide operations, synchronising data movement between registers and arithmetic units. |
+| Datapath | Implements arithmetic operations using 32-bit signed/unsigned multipliers and dividers, plus remainder handling logic. |
 
-Supported **RISC-V M-Extension Instructions:**
-
-| Instruction | Description |
-|-------------|------------|
-| MUL         | Multiply lower 32 bits of result |
-| MULH        | Multiply high signed × signed |
-| MULHSU      | Multiply high signed × unsigned |
-| MULHU       | Multiply high unsigned × unsigned |
-| DIV         | Signed division |
-| DIVU        | Unsigned division |
-| REM         | Signed remainder |
-| REMU        | Unsigned remainder |
-
-### 🔸 FSM Controller (Control Logic)
+### 🔸 FSM Controller
 
 The finite state machine (FSM) governs sequencing of multiplication and division operations.  
 
@@ -106,21 +93,36 @@ The datapath performs all arithmetic operations and bit manipulations under FSM 
 
 ---
 
+### 🔸 Supported **RISC-V M-Extension Instructions:**
+
+| Instruction | Description |
+|-------------|------------|
+| MUL         | Multiply lower 32 bits of result |
+| MULH        | Multiply high signed × signed |
+| MULHSU      | Multiply high signed × unsigned |
+| MULHU       | Multiply high unsigned × unsigned |
+| DIV         | Signed division |
+| DIVU        | Unsigned division |
+| REM         | Signed remainder |
+| REMU        | Unsigned remainder |
+
+---
+
 ## 🧩 Verification
 
 ### 🧪 Top-Level Functional Testbench — `m_unit_tb.sv`
-Verifies all M-Extension instructions with directed and randomized tests.
+Verifies all M-Extension instructions with directed and randomised tests.
 
 | Test Category | Coverage |
 |---------------|---------|
 | MUL / MULH / MULHSU / MULHU | Signed & unsigned multiplication paths |
 | DIV / DIVU | Signed/unsigned division, zero-divisor and overflow handling |
 | REM / REMU | Remainder correctness under various operand signs |
-| Randomized Division Tests | 1000 iterations for statistical correctness |
+| Randomised Division Tests | 1000 iterations for statistical correctness |
 
-**Output:** Console-based pass/fail summary with mismatched cases logged.
+---
 
-### 🧩 Datapath Register Testbench — `test_m_registers.sv`
+### 🔍 Datapath Register Testbench — `test_m_registers.sv`
 Unit-level verification for internal multiplexers and register updates.
 
 | Feature Tested       | Description |
@@ -180,9 +182,9 @@ The positive WNS indicates that the design can potentially operate at a frequenc
 
 ---
 
-### 🧱 **Resource Utilization**
+### 🧱 **Resource Utilisation**
 
-| Resource | Used | Available | Utilization |
+| Resource | Used | Available | Utilisation |
 |-----------|-------|------------|--------------|
 | **Slice LUTs** | 594 | 134,600 | 0.44% |
 | **Slice Registers** | 203 | 269,200 | 0.08% |
@@ -195,7 +197,7 @@ Hardware multiplication and division in the M-extension are implemented using 4 
 
 ---
 
-## 🧱 Future Work
+## 🚧 Future Work
 - Add support for 64-bit (RV64IM) instructions  
 - Integrate pipeline stall/forwarding signals  
 - Expand testbench automation with coverage metrics  
